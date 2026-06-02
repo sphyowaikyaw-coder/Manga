@@ -1,0 +1,15 @@
+@model WebApp.View_Model.MangaItem
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "Edit Manga";
+}
+
+<section class="content-band dashboard-band">
+    <div class="container">
+        <div class="section-heading">
+            <h2>Edit Manga</h2>
+            <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Back to Manga</a>
+        </div>
+        <partial name="_MangaForm" model="Model" />
+    </div>
+</section>

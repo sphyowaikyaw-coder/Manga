@@ -1,0 +1,135 @@
+@model IReadOnlyList<WebApp.View_Model.MangaItem>
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "MangaVerse Library";
+    var searchQuery = ViewData["SearchQuery"] as string ?? string.Empty;
+    var showAllNew = ViewData["ShowAllNew"] as bool? == true;
+    var newManga = Model.OrderByDescending(manga => manga.Id).ToList();
+    var visibleNewManga = showAllNew ? newManga : newManga.Take(12).ToList();
+    var latest = Model.OrderByDescending(manga => manga.Id).ToList();
+    var hot = Model.OrderByDescending(manga => manga.Views).Take(5).ToList();
+}
+
+<section class="catalog-top">
+    <div class="container">
+        <form class="search-strip" asp-controller="Manga" asp-action="Index" method="get">
+            <i class="fa fa-search"></i>
+            <input type="search" name="q" value="@searchQuery" placeholder="Search manga, manhwa, manhua...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+</section>
+
+<section id="new" class="content-band compact-band">
+    <div class="container">
+        <div class="block-heading">
+            <h2>@(string.IsNullOrWhiteSpace(searchQuery) ? "New Manga Update" : $"Search Results for \"{searchQuery}\"")</h2>
+            @if (!showAllNew && newManga.Count > 12)
+            {
+                <a asp-controller="Manga" asp-action="Index" asp-route-q="@searchQuery" asp-route-showAllNew="true" asp-fragment="new">View All</a>
+            }
+        </div>
+        <div class="update-card-grid">
+            @foreach (var manga in visibleNewManga)
+            {
+                <article class="update-card">
+                    <a class="update-cover" asp-controller="Manga" asp-action="Details" asp-route-id="@manga.Id">
+                        <img src="@manga.CoverImageUrl" alt="@manga.Title">
+                        <span>NEW</span>
+                    </a>
+                    <div>
+                        <h3><a asp-controller="Manga" asp-action="Details" asp-route-id="@manga.Id">@manga.Title</a></h3>
+                        <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id" asp-route-chapter="@manga.Chapters">Chapter @manga.Chapters</a>
+                    </div>
+                </article>
+            }
+        </div>
+        @if (newManga.Count == 0)
+        {
+            <p class="empty-state">No manga found.</p>
+        }
+    </div>
+</section>
+
+<section id="latest" class="content-band alt-band compact-band">
+    <div class="container directory-layout">
+        <div class="latest-panel">
+            <div class="block-heading">
+                <h2>Latest Manga Updates</h2>
+                <a href="#new">New Updates</a>
+            </div>
+            @for (var index = 0; index < latest.Count; index++)
+            {
+                var manga = latest[index];
+                <article class="latest-row @(index >= 5 ? "is-hidden" : string.Empty)" data-latest-row>
+                    <a asp-controller="Manga" asp-action="Details" asp-route-id="@manga.Id">
+                        <img src="@manga.CoverImageUrl" alt="@manga.Title">
+                    </a>
+                    <div class="latest-copy">
+                        <h3><a asp-controller="Manga" asp-action="Details" asp-route-id="@manga.Id">@manga.Title</a></h3>
+                        <p>@manga.Description</p>
+                        <div class="chapter-pills">
+                            <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id" asp-route-chapter="@manga.Chapters">Chapter @manga.Chapters</a>
+                            <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id" asp-route-chapter="@(Math.Max(1, manga.Chapters - 1))">Chapter @(Math.Max(1, manga.Chapters - 1))</a>
+                            <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id" asp-route-chapter="@(Math.Max(1, manga.Chapters - 2))">Chapter @(Math.Max(1, manga.Chapters - 2))</a>
+                        </div>
+                    </div>
+                    <span class="status-chip">@manga.Status</span>
+                </article>
+            }
+            @if (latest.Count > 5)
+            {
+                <button class="load-more" type="button" data-load-more-latest>Load More</button>
+            }
+        </div>
+
+        <aside id="hot" class="hot-panel">
+            <div class="block-heading">
+                <h2>Hot Manga</h2>
+            </div>
+            @for (var index = 0; index < hot.Count; index++)
+            {
+                var manga = hot[index];
+                <a class="hot-row" asp-controller="Manga" asp-action="Details" asp-route-id="@manga.Id">
+                    <strong>@(index + 1)</strong>
+                    <img src="@manga.CoverImageUrl" alt="@manga.Title">
+                    <span>
+                        <b>@manga.Title</b>
+                        <small>@manga.Views.ToString("N0") views</small>
+                    </span>
+                </a>
+            }
+            <div class="bookmark-box">
+                <h3>Bookmark</h3>
+                <p>Login to save manga and continue reading from your dashboard.</p>
+                <a class="pill-button" asp-controller="Account" asp-action="Login">Login</a>
+            </div>
+        </aside>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        (() => {
+            const button = document.querySelector("[data-load-more-latest]");
+            const rows = Array.from(document.querySelectorAll("[data-latest-row]"));
+            const pageSize = 5;
+
+            if (!button) {
+                return;
+            }
+
+            button.addEventListener("click", () => {
+                const hiddenRows = rows.filter(row => row.classList.contains("is-hidden"));
+
+                hiddenRows.slice(0, pageSize).forEach(row => {
+                    row.classList.remove("is-hidden");
+                });
+
+                if (hiddenRows.length <= pageSize) {
+                    button.hidden = true;
+                }
+            });
+        })();
+    </script>
+}

@@ -1,0 +1,35 @@
+@model IReadOnlyList<WebApp.View_Model.MangaItem>
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "Reader Dashboard";
+}
+
+<section class="content-band dashboard-band">
+    <div class="container">
+        <div class="section-heading">
+            <h2>Hello, @User.Identity?.Name</h2>
+            <span>Your reading shelf</span>
+        </div>
+        <div class="dashboard-grid">
+            <div class="side-panel">
+                <h3>Account</h3>
+                <p>Role: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</p>
+                <p>Email: @User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</p>
+            </div>
+            <div class="manga-grid compact-grid">
+                @foreach (var manga in Model)
+                {
+                    <article class="manga-card">
+                        <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id" class="cover" style="background-image: url('@manga.CoverImageUrl')">
+                            <span>Continue</span>
+                        </a>
+                        <div class="card-copy">
+                            <h3>@manga.Title</h3>
+                            <p>Chapter @(Math.Max(1, manga.Chapters - 2))</p>
+                        </div>
+                    </article>
+                }
+            </div>
+        </div>
+    </div>
+</section>

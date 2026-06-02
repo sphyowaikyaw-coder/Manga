@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@(ViewData["Title"] ?? "MangaVerse")</title>
+    <link rel="stylesheet" href="~/Design/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="~/Design/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="~/css/mangaverse.css" asp-append-version="true">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container nav-shell">
+            <a class="brand" asp-controller="Manga" asp-action="Index">
+                <img src="~/Design/img/logo.png" alt="MangaVerse">
+                <span>MangaVerse</span>
+            </a>
+            <nav class="main-nav">
+                <a asp-controller="Manga" asp-action="Index">Home</a>
+                <a asp-controller="Manga" asp-action="Index" asp-fragment="latest">Updates</a>
+                <a asp-controller="Manga" asp-action="Index" asp-fragment="new">New Manga</a>
+                <a asp-controller="Manga" asp-action="Index" asp-fragment="hot">Hot Manga</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="Index">Admin</a>
+                }
+            </nav>
+            <div class="account-nav">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a class="ghost-link" asp-controller="Account" asp-action="Dashboard">@User.Identity.Name</a>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="icon-button" title="Logout"><i class="fa fa-sign-out"></i></button>
+                    </form>
+                }
+                else
+                {
+                    <a class="ghost-link" asp-controller="Account" asp-action="Login">Login</a>
+                    <a class="pill-button" asp-controller="Account" asp-action="Register">Join</a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <strong>MangaVerse</strong>
+                <p>Read chapters, track favorites, and manage the catalog from one clean MVC site.</p>
+            </div>
+            <div class="demo-logins">
+                <span>User: user@manga.com / user123</span>
+                <span>Admin: admin@manga.com / admin123</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/Design/js/jquery-3.3.1.min.js"></script>
+    <script src="~/Design/js/bootstrap.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

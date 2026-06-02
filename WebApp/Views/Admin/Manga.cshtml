@@ -1,0 +1,53 @@
+@model IReadOnlyList<WebApp.View_Model.MangaItem>
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "Manage Manga";
+    var searchQuery = ViewData["SearchQuery"] as string ?? string.Empty;
+}
+
+<section class="content-band dashboard-band">
+    <div class="container">
+        <div class="section-heading">
+            <h2>Manage Manga</h2>
+            <a class="pill-button" asp-controller="Admin" asp-action="AddManga">Add Manga</a>
+        </div>
+        <form class="admin-search" asp-controller="Admin" asp-action="Manga" method="get">
+            <input type="search" name="q" value="@searchQuery" placeholder="Search by title, author, status, genre">
+            <button class="pill-button" type="submit">Search</button>
+            @if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Clear</a>
+            }
+        </form>
+        @if (TempData["AdminMessage"] is string message)
+        {
+            <div class="admin-alert">@message</div>
+        }
+        <div class="admin-table">
+            <div class="table-row table-head">
+                <span>Title</span>
+                <span>Status</span>
+                <span>Chapters</span>
+                <span>Rating</span>
+                <span>Action</span>
+            </div>
+            @foreach (var manga in Model)
+            {
+                <div class="table-row">
+                    <span>@manga.Title</span>
+                    <span>@manga.Status</span>
+                    <span>@manga.Chapters</span>
+                    <span>@manga.Rating</span>
+                    <span class="table-actions">
+                        <a class="table-action" asp-controller="Admin" asp-action="EditManga" asp-route-id="@manga.Id">Edit</a>
+                        <a class="table-action" asp-controller="Admin" asp-action="AddChapter" asp-route-mangaId="@manga.Id">Add Chapter</a>
+                    </span>
+                </div>
+            }
+        </div>
+        @if (Model.Count == 0)
+        {
+            <p class="empty-state">No manga found.</p>
+        }
+    </div>
+</section>

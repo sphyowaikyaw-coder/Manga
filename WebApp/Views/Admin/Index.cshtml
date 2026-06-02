@@ -1,0 +1,37 @@
+@model IReadOnlyList<WebApp.View_Model.MangaItem>
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="content-band dashboard-band">
+    <div class="container">
+        <div class="section-heading">
+            <h2>Admin Dashboard</h2>
+            <span>Catalog control center</span>
+            
+        </div>
+        @if (TempData["AdminMess"] is string message)
+        {
+            <div class="admin-alert">@message</div>
+        }
+        <div class="admin-metrics">
+            <div><strong>@Model.Count</strong><span>Manga</span></div>
+            <div><strong>@Model.Sum(manga => manga.Chapters)</strong><span>Chapters</span></div>
+            <div><strong>@Model.Sum(manga => manga.Views).ToString("N0")</strong><span>Views</span></div>
+        </div>
+        <div class="admin-actions d-flex flex-column flex-md-column" >
+            <a class="pill-button" asp-controller="Admin" asp-action="AddManga">Add Manga</a>
+            <a class="pill-button" asp-controller="Admin" asp-action="Manga">Manage Manga</a>
+            <a class="ghost-button" asp-controller="Admin" asp-action="Users">Manage Users</a>
+            <a asp-controller="Admin"
+               asp-action="ExportToExcel"
+               class="btn btn-success">
+                Export Excel
+            </a>
+            <form method="post" asp-controller="Admin" asp-action="ExcelFileSave" class="table-bordered d-flex flex-wrap justify-content-center" enctype="multipart/form-data">
+                <input type="file" name="excelFile" value="" class="form-control mb-1 p-1"/> <button type="submit" class="btn btn-success">Import Excel</button>
+            </form>
+        </div>
+    </div>
+</section>

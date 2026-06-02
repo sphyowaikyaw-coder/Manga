@@ -1,0 +1,61 @@
+@model WebApp.View_Model.MangaItem
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = Model.Title;
+    var latestRelease = DateTime.Today;
+    string ReleaseDate(int chapter)
+    {
+        var daysBack = (Model.Chapters - chapter) * 7;
+        var date = latestRelease.AddDays(-daysBack);
+
+        return chapter == Model.Chapters
+            ? "1 day ago"
+            : date.ToString("MMMM d, yyyy");
+    }
+}
+
+<section class="detail-hero">
+    <div class="container detail-grid">
+        <img class="detail-cover" src="@Model.CoverImageUrl" alt="@Model.Title">
+        <div class="detail-copy">
+            <span class="eyebrow">@Model.Status</span>
+            <h1>@Model.Title</h1>
+            <p>@Model.Description</p>
+            <div class="stats-row">
+                <span><strong>@Model.Chapters</strong> Chapters</span>
+                <span><strong>@Model.Views.ToString("N0")</strong> Views</span>
+                <span><strong>@Model.Rating</strong> Rating</span>
+            </div>
+            <div class="genre-row">
+                @foreach (var genre in Model.Genres)
+                {
+                    <span>@genre</span>
+                }
+            </div>
+            <div class="read-actions">
+                <a class="pill-button" asp-controller="Manga" asp-action="Read" asp-route-id="@Model.Id" asp-route-chapter="1">Read First</a>
+                <a class="ghost-button" asp-controller="Manga" asp-action="Read" asp-route-id="@Model.Id" asp-route-chapter="@Model.Chapters">Read Last</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content-band compact-band">
+    <div class="container">
+        <div class="chapter-panel">
+            <div class="chapter-panel-head">
+                <h2>Latest Manga Releases</h2>
+                <span>@Model.Chapters chapters</span>
+            </div>
+            <div class="release-list">
+                @foreach (var chapter in Enumerable.Range(1, Model.Chapters).Reverse())
+                {
+                    <a class="release-row" asp-controller="Manga" asp-action="Read" asp-route-id="@Model.Id" asp-route-chapter="@chapter">
+                        <span class="release-title"><i class="fa fa-file-text-o"></i> Chapter @chapter</span>
+                        <span class="release-date">@ReleaseDate(chapter)</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</section>

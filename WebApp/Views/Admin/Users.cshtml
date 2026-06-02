@@ -1,0 +1,37 @@
+@model IReadOnlyList<WebApp.View_Model.AdminUserItem>
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "Manage Users";
+}
+
+<section class="content-band dashboard-band">
+    <div class="container">
+        <div class="section-heading">
+            <h2>Manage Users</h2>
+            <span>Database users</span>
+        </div>
+        @if (TempData["AdminMessage"] is string message)
+        {
+            <div class="admin-alert">@message</div>
+        }
+        <div class="admin-table">
+            <div class="table-row table-head">
+                <span>Name</span>
+                <span>Email</span>
+                <span>Role</span>
+                <span>Joined</span>
+                <span>Action</span>
+            </div>
+            @foreach (var user in Model)
+            {
+                <div class="table-row">
+                    <span>@user.Name</span>
+                    <span>@user.Email</span>
+                    <span>@user.Role</span>
+                    <span>@user.Joined</span>
+                    <span><a class="table-action" asp-controller="Admin" asp-action="EditUser" asp-route-id="@user.Id">Edit</a></span>
+                </div>
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,70 @@
+@model WebApp.View_Model.MangaItem
+
+@{
+    var formAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<form method="post" enctype="multipart/form-data" class="admin-form" asp-controller="Admin" asp-action="@formAction">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden">
+    <input asp-for="CoverImageUrl" type="hidden">
+    <div class="form-grid">
+        <div>
+            <label asp-for="Title"></label>
+            <input asp-for="Title" placeholder="Manga title">
+        </div>
+        <div>
+            <label asp-for="Author"></label>
+            <input asp-for="Author" placeholder="Author name">
+        </div>
+        <div>
+            <label asp-for="Status"></label>
+            <select asp-for="Status">
+                <option>OnGoing</option>
+                <option>Completed</option>
+                <option>Stopped</option>
+            </select>
+        </div>
+        <div>
+            <label asp-for="Chapters"></label>
+            <input asp-for="Chapters" type="number" min="0">
+        </div>
+        <div>
+            <label asp-for="Views"></label>
+            <input asp-for="Views" type="number" min="0">
+        </div>
+        <div>
+            <label asp-for="Rating"></label>
+            <input asp-for="Rating" type="number" min="0" max="5" step="0.1">
+        </div>
+        <div>
+            <label asp-for="CoverImage"></label>
+            <input asp-for="CoverImage" placeholder="/Design/img/trending/trend-1.jpg" type="file">
+            @if (!string.IsNullOrWhiteSpace(Model.CoverImageUrl))
+            {
+                <div class="cover-preview">
+                    <img src="@Model.CoverImageUrl" alt="@Model.Title cover">
+                    <span>@Model.CoverImageUrl</span>
+                </div>
+            }
+        </div>
+        <div>
+            <label asp-for="GenresText">Genres</label>
+            <input asp-for="GenresText" placeholder="Action, Comedy, Romance">
+        </div>
+        @* <div>
+            <label asp-for="HeroImage"></label>
+            <input asp-for="HeroImage" placeholder="/Design/img/hero/hero-1.jpg">
+        </div> *@
+    </div>
+    <label asp-for="Description"></label>
+    <textarea asp-for="Description" rows="5" placeholder="Short manga description"></textarea>
+    <label>
+        <input asp-for="Featured">
+        Featured manga
+    </label>
+    <div class="form-actions">
+        <button class="pill-button" type="submit">Save Manga</button>
+        <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Cancel</a>
+    </div>
+</form>

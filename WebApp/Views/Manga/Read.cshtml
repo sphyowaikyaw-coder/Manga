@@ -1,0 +1,43 @@
+@model WebApp.View_Model.MangaItem
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = $"Reading {Model.Title}";
+    var chapter = ViewBag.Chapter != null ? (int)ViewBag.Chapter : 1;
+}
+
+<section class="reader-toolbar">
+    <div class="container reader-nav">
+        <div>
+            <a asp-controller="Manga" asp-action="Details" asp-route-id="@Model.Id"><i class="fa fa-angle-left"></i> Back</a>
+            <strong>@Model.Title</strong>
+            <span>Chapter @chapter</span>
+        </div>
+        <div class="reader-actions">
+            <a class="icon-button" title="Previous chapter" asp-controller="Manga" asp-action="Read" asp-route-id="@Model.Id" asp-route-chapter="@(Math.Max(1, chapter - 1))"><i class="fa fa-chevron-left"></i></a>
+            <a class="icon-button" title="Next chapter" asp-controller="Manga" asp-action="Read" asp-route-id="@Model.Id" asp-route-chapter="@(Math.Min(Model.Chapters, chapter + 1))"><i class="fa fa-chevron-right"></i></a>
+        </div>
+    </div>
+</section>
+
+<section class="reader-page">
+    <div class="container page-stack">
+        @* <div class="manga-page" style="background-image: url('@Model.')">
+            <span>Page 01</span>
+        </div>
+        <div class="manga-page panel-page">
+            <h2>@Model.Title</h2>
+            <p>@Model.Description</p>
+            <span>Page 02</span>
+        </div>
+        <div class="manga-page" style="background-image: url('@Model.CoverImageUrl')">
+            <span>Page 03</span>
+        </div> *@
+        <div>
+            <h2>@Model.Title - Chapter @chapter</h2>
+            <p>@Model.Description</p>
+            
+            
+        </div>
+        <iframe src="@Model.Chapter.ChapterUrl" style="width: 100%; height: 800px; zoom: 100%;"></iframe>
+    </div>
+</section>

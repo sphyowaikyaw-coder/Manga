@@ -1,0 +1,33 @@
+@model WebApp.View_Model.LoginViewModel
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "Login";
+}
+
+<section class="auth-band">
+    <div class="auth-card">
+        <span class="eyebrow">Welcome back</span>
+        <h1>Login</h1>
+        <form asp-action="Login" method="post" class="auth-form">
+            @Html.AntiForgeryToken()
+            <input asp-for="ReturnUrl" type="hidden">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <label asp-for="Email"></label>
+            <input asp-for="Email" placeholder="user@manga.com or admin@manga.com">
+            <span asp-validation-for="Email"></span>
+            <label asp-for="Password"></label>
+            <input asp-for="Password" placeholder="Password">
+            <span asp-validation-for="Password"></span>
+            <button type="submit" class="pill-button">Login</button>
+        </form>
+        <div class="demo-logins auth-help">
+            <span>User: user@manga.com / user123</span>
+            <span>Admin: admin@manga.com / admin123</span>
+        </div>
+        <a asp-controller="Account" asp-action="Register">Create a reader account</a>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
