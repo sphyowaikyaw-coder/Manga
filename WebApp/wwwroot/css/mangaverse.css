@@ -157,6 +157,16 @@ a:hover {
     font-weight: 800;
 }
 
+#searchResultsForm{
+    max-width: 100%;
+}
+#searchResults {
+    max-height: 350px;
+    overflow-y: auto;
+    max-width: 53%;
+    top: 120px;
+}
+
 .hero-content {
     padding: 90px 15px;
 }

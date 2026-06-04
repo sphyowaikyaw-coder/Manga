@@ -2,6 +2,7 @@ using ClosedXML.Excel;
 using Dependency;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Business_Model;
@@ -14,6 +15,7 @@ namespace WebApp.Controllers;
 public class AdminController(
     MangaService mangaService,
     UserService userService,
+    ChapterService chapterService,
     ChapterUrlService chapterUrlService,
     CoverUrlService coverUrlService) : Controller
 {
@@ -22,6 +24,24 @@ public class AdminController(
         var manga = await mangaService.GetAllManga();
 
         return View(manga.Select(MapToMangaViewModel).ToList());
+    }
+    public async Task<IActionResult> ClickManga(int id)
+    {
+        if (id == 0)
+        {
+            return NotFound();
+        }
+        var manga = await mangaService.GetMangaById(id);
+        if (manga is null)
+        {
+            return NotFound();
+        }
+        var viewModel = new List<MangaItem>
+        {
+            MapToMangaViewModel(manga)
+        };
+
+        return View("Views/Admin/Manga.cshtml", viewModel);
     }
 
     public async Task<IActionResult> Manga(string? q = null)
@@ -73,6 +93,24 @@ public class AdminController(
         }
 
         return View(MapToMangaViewModel(manga));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteManga([FromBody] MangaItem mangaitem)
+    {
+        try
+        {
+            var deleted = await mangaService.DeleteManga(mangaitem.IdforDelete);
+
+            return Json(new
+            {
+                message = $"Deleted manga with ID: {mangaitem.IdforDelete}"
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.ToString());
+        }
     }
 
     [HttpPost]
@@ -371,4 +409,33 @@ public class AdminController(
         }
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteChapter([FromBody] MangaItem request)
+
+    {
+
+        var manga = await mangaService.GetMangaById(request.Id);
+        
+
+        if (manga == null)
+        {
+            return Json(new { message = "Manga not found" });
+        }
+
+        var chapterIdToDelete = await chapterService.GetChapterIDByChapterNumber(request.Id, request.chapterNumber);
+
+        if (chapterIdToDelete <= 0)
+        {
+            return Json(new { message = "Chapter not found" });
+        }
+        var isDeleted = await chapterService.DeleteChapter(chapterIdToDelete);
+        if (isDeleted)
+        {
+            return Json(new { message = $"Chapter {request.chapterNumber } is deleted successfully" });
+        }
+
+        return Json(new { message = "Error" });
+    }
+
 }

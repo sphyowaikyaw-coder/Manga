@@ -13,4 +13,6 @@ public interface MangaService
     Task<bool> UpdateManga(BM_MangaItem manga);
 
     Task<bool> AddChapter(BM_ChapterItem chapter);
+
+    Task<bool> DeleteManga(int id);
 }

@@ -10,15 +10,59 @@
     var hot = Model.OrderByDescending(manga => manga.Views).Take(5).ToList();
 }
 
+
 <section class="catalog-top">
     <div class="container">
-        <form class="search-strip" asp-controller="Manga" asp-action="Index" method="get">
+        <form class="search-strip" id="searchResultsForm" asp-controller="Manga" asp-action="Index" method="get">
             <i class="fa fa-search"></i>
-            <input type="search" name="q" value="@searchQuery" placeholder="Search manga, manhwa, manhua...">
+            <input type="text" name="q" value="@searchQuery" id="searchBox" class="form-control" placeholder="Search manga, manhwa, manhua...">
+            <div id="searchResults"
+                 class="list-group position-absolute w-100"
+                 style="z-index:1000;">
+            </div>
             <button type="submit">Search</button>
         </form>
     </div>
 </section>
+<script>
+    document.getElementById("searchBox").addEventListener("keyup", function () {
+
+        let keyword = this.value;
+
+        // if (keyword.length < 1) {
+        //     document.getElementById("searchResults").innerHTML = "";
+        //     return;
+        // }
+
+        fetch(`/Manga/SearchManga?keyword=${keyword}`)
+            .then(response => response.json())
+            .then(data => {
+
+                let html = "";
+
+                data.forEach(manga => {
+
+                    html += `
+                        <a href="/Manga/Details/${manga.mangaId}"
+                           class="list-group-item list-group-item-action">
+
+                            <div class="d-flex align-items-center">
+                                <img src="${manga.coverImage}"
+                                     width="50"
+                                     height="70"
+                                     class="me-2">
+
+                                <span>${manga.title}</span>
+                            </div>
+
+                        </a>
+                    `;
+                });
+
+                document.getElementById("searchResults").innerHTML = html;
+            });
+    });
+</script>
 
 <section id="new" class="content-band compact-band">
     <div class="container">

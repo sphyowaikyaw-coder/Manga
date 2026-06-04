@@ -11,5 +11,9 @@ namespace Service.Service
     {
         public Task<List<BM_ChapterItem>> GetChaptersByMangaId(int mangaId);
         public Task<BM_ChapterItem?> GetChapterById(int id);
+
+        public Task<bool> DeleteChapter(int id);
+
+        public Task<int> GetChapterIDByChapterNumber(int mangaId, int chapterNumber);
     }
 }

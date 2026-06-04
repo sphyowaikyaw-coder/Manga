@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Office2021.Drawing.SketchyShapes;
 using Microsoft.AspNetCore.Mvc;
 using Service.Business_Model;
 using Service.Service;
@@ -29,6 +30,29 @@ public class MangaController(MangaService mangaService, ChapterUrlService chapte
         }
 
         return View("Views/Manga/Details.cshtml", MapToViewModel(manga));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SearchManga(string keyword)
+    {
+        var manga = await mangaService.GetAllManga();
+        var search = keyword.Trim();
+        var mangas = manga
+            .Where(item =>
+                item.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                item.Author.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                item.Status.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                item.Genres.Any(genre => genre.Contains(search, StringComparison.OrdinalIgnoreCase)))
+            .Select(m => new
+            {
+                mangaId = m.Id,
+                title = m.Title,
+                coverImage = m.CoverImage
+            })
+            .Take(5)
+            .ToList();
+
+        return Json(mangas);
     }
 
     public async Task<IActionResult> Read(int id, int chapter)
@@ -111,4 +135,6 @@ public class MangaController(MangaService mangaService, ChapterUrlService chapte
             item.Status.Contains(search, StringComparison.OrdinalIgnoreCase) ||
             item.Genres.Any(genre => genre.Contains(search, StringComparison.OrdinalIgnoreCase)));
     }
+
+    
 }

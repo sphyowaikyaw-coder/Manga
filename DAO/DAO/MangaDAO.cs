@@ -13,4 +13,6 @@ public interface MangaDAO
     Task<bool> UpdateManga(Manga manga);
 
     Task<bool> AddChapter(Chapter chapter);
+
+    Task<bool> DeleteManga(int id);
 }

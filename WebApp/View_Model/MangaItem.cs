@@ -6,6 +6,8 @@ public class MangaItem
 
     public string Title { get; set; } = string.Empty;
 
+    public int IdforDelete { get; set; }
+
     public string Author { get; set; } = string.Empty;
 
     public string Status { get; set; } = string.Empty;
@@ -21,6 +23,8 @@ public class MangaItem
     public string GenresText { get; set; } = string.Empty;
 
     public int Chapters { get; set; }
+
+    public int chapterNumber { get; set; }
 
     public int Views { get; set; }
 

@@ -33,7 +33,16 @@ namespace Service.Service.ServiceImpl
             };
         }
 
-       
+        public async Task<bool> DeleteChapter(int id)
+        {
+            return await chapterDAO.DeleteChapter(id);
+
+        }
+
+        public async Task<int> GetChapterIDByChapterNumber(int mangaId, int chapterNumber)
+        {
+            return await chapterDAO.GetChapterIDByChapterNumber(mangaId, chapterNumber);
+        }
     }
 
 }

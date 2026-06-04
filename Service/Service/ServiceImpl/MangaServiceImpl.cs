@@ -100,4 +100,9 @@ public class MangaServiceImpl(MangaDAO mangaDAO) : MangaService
                 .ToList()
         };
     }
+
+    public async Task<bool> DeleteManga(int id)
+    {
+        return await mangaDAO.DeleteManga(id);
+    }
 }

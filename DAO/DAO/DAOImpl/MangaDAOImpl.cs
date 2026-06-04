@@ -52,6 +52,8 @@ public class MangaDAOImpl(MangaDbContext mangaDbContext) : MangaDAO
         return true;
     }
 
+
+
     public async Task<bool> AddChapter(Chapter chapter)
     {
         var mangaExists = await mangaDbContext.Mangas.AnyAsync(manga => manga.MangaId == chapter.MangaId);
@@ -65,6 +67,23 @@ public class MangaDAOImpl(MangaDbContext mangaDbContext) : MangaDAO
         await mangaDbContext.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> DeleteManga(int id)
+    {
+        var manga = await mangaDbContext.Mangas.FindAsync(id);
+        if (manga is null)
+        {
+            return false;
+        }
+        var ma = await mangaDbContext.MangaGenres.Where(mg => mg.MangaId == id).ToListAsync();
+        mangaDbContext.MangaGenres.RemoveRange(ma);
+        if(manga != null)
+        {
+            mangaDbContext.Mangas.Remove(manga);
+        }
+        await mangaDbContext.SaveChangesAsync();
+        return true;
+    }   
 
     private IQueryable<Manga> MangaQuery()
     {
