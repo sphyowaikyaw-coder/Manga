@@ -1,0 +1,35 @@
+﻿@model WebApp.View_Model.ChapterFormViewModel
+
+@{
+    var formAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+        <form method="post" enctype="multipart/form-data" class="admin-form" asp-controller="Admin" asp-action="@formAction">
+            @Html.AntiForgeryToken()
+            <input asp-for="MangaId" type="hidden">
+            <input asp-for="MangaTitle" type="hidden">
+            <div class="form-note">
+                Adding chapter to <strong>@Model.MangaTitle</strong>
+            </div>
+            <div class="form-grid">
+                <div>
+                    <label asp-for="ChapterNumber"></label>
+                    <input asp-for="ChapterNumber" type="number" min="1">
+                    <span asp-validation-for="ChapterNumber"></span>
+                </div>
+                <div>
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" placeholder="Chapter title">
+                    <span asp-validation-for="Title"></span>
+                </div>
+            </div>
+            <label asp-for="ImageFolder">Chapter Image Folder</label>
+            <input asp-for="ImageFolder" placeholder="/uploads/manga/1/chapter-129/">
+            <label asp-for="PageImages">Chapter File</label>
+            <input asp-for="PageImages" type="file">
+            <p class="field-help">Select chapter pdf file.</p>
+            <div class="form-actions">
+                <button class="pill-button" type="submit">Save Chapter</button>
+                <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Cancel</a>
+            </div>
+        </form>

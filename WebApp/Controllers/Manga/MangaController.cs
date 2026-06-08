@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Office2021.Drawing.SketchyShapes;
 using Microsoft.AspNetCore.Mvc;
 using Service.Business_Model;
@@ -23,13 +24,20 @@ public class MangaController(MangaService mangaService, ChapterUrlService chapte
     public async Task<IActionResult> Details(int id)
     {
         var manga = await mangaService.GetMangaById(id);
-       
+
         if (manga is null)
         {
             return NotFound();
         }
+        MangaItem mangaItem = MapToViewModel(manga);
 
-        return View("Views/Manga/Details.cshtml", MapToViewModel(manga));
+        var chapters = await chapterService.GetChaptersByMangaId(id);
+        mangaItem.ChapterList = chapters
+            .Where(x => x.MangaId == manga.Id)
+            .Select(x => ((int)x.ChapterNumber))
+            .ToList();
+
+        return View("Views/Manga/Details.cshtml", mangaItem);
     }
 
     [HttpGet]

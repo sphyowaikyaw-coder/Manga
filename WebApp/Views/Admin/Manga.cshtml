@@ -9,7 +9,11 @@
     <div class="container">
         <div class="section-heading">
             <h2>Manage Manga</h2>
-            <a class="pill-button" asp-controller="Admin" asp-action="AddManga">Add Manga</a>
+            <div>
+                <a class="ghost-button " asp-controller="Admin" asp-action="Index"><i class="fa-solid fa-circle-chevron-left"></i></a>
+                <a class="pill-button" asp-controller="Admin" asp-action="AddManga">Add Manga</a>
+            </div>
+            
         </div>
         <form class="admin-search" asp-controller="Admin" asp-action="Manga" method="get">
             <input type="search" id="searchBox" name="q" value="@searchQuery" placeholder="Search by title, author, status, genre">
@@ -45,6 +49,8 @@
                     <span class="table-actions">
                         <a class="table-action" asp-controller="Admin" asp-action="EditManga" asp-route-id="@manga.Id">Edit</a>
                         <a class="table-action" asp-controller="Admin" asp-action="AddChapter" asp-route-mangaId="@manga.Id">Add Chapter</a>
+                        <a class="table-action" asp-controller="Admin" asp-action="ChapterLists" asp-route-Id="@manga.Id">Chapter Lists</a>
+
                         <button class="table-action" onclick="deleteChapter(@manga.Id)" style="color: red; border: none; background: none;">Delete Chapter</button>
 
                         <button class="table-action" onclick="deleteManga(@manga.Id)" style="color: red; border: none; background: none;">Delete</button>
@@ -142,7 +148,7 @@
             input: 'number',
             inputPlaceholder: 'Chapter number...',
             showCancelButton: true,
-            confirmButtonText: 'Delete',
+            confirmButtonText: 'Delete', 
             cancelButtonText: 'Cancel'
         });
 

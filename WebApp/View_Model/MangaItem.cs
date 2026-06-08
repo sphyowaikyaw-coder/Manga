@@ -26,11 +26,15 @@ public class MangaItem
 
     public int chapterNumber { get; set; }
 
+    public List<int> ChapterList { get; set; } = new();
+
     public int Views { get; set; }
 
     public decimal Rating { get; set; }
 
     public bool Featured { get; set; }
+
+    public List<ChapterItem>? ChapterLists { get; set; }
 
     public ChapterItem? Chapter { get; set; }
 }

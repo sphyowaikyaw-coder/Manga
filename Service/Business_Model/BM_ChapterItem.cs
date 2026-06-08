@@ -2,6 +2,8 @@ namespace Service.Business_Model;
 
 public class BM_ChapterItem
 {
+    public int ChapterId { get; set; }
+
     public int MangaId { get; set; }
 
     public decimal ChapterNumber { get; set; }

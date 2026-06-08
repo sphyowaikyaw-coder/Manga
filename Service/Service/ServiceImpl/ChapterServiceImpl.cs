@@ -26,6 +26,7 @@ namespace Service.Service.ServiceImpl
         {
             return new BM_ChapterItem
             {
+                ChapterId = chapter.ChapterId,
                 MangaId = chapter.MangaId,
                 ChapterNumber = chapter.ChapterNumber ?? 0,
                 Title = chapter.Title ?? string.Empty,

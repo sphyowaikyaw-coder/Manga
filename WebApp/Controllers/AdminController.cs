@@ -43,6 +43,10 @@ public class AdminController(
 
         return View("Views/Admin/Manga.cshtml", viewModel);
     }
+    public async Task<IActionResult> EditChapter()
+    {
+        return View(EditChapter);
+    }
 
     public async Task<IActionResult> Manga(string? q = null)
     {
@@ -65,6 +69,20 @@ public class AdminController(
     public IActionResult AddManga()
     {
         return View(new MangaItem { Status = "Ongoing", Rating = 4.5m, Chapters = 0 });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ChapterLists(int id)
+    {
+        var manga = await mangaService.GetMangaById(id);
+        if (manga is null)
+        {
+            return NotFound();
+        }
+        var chapters = await chapterService.GetChaptersByMangaId(id);
+        var viewModel = MapToMangaViewModel(manga);
+        viewModel.ChapterLists = chapters.Select(MapToChapterViewModel).ToList();
+        return View(viewModel);
     }
 
     [HttpPost]
@@ -241,7 +259,7 @@ public class AdminController(
             Status = manga.Status,
             Description = manga.Description,
             CoverImageUrl = manga.CoverImage,
-
+            
             Genres = manga.Genres,
             GenresText = string.Join(", ", manga.Genres),
             Chapters = manga.Chapters,
@@ -438,4 +456,15 @@ public class AdminController(
         return Json(new { message = "Error" });
     }
 
+    public static ChapterItem MapToChapterViewModel(BM_ChapterItem bmChapter)
+    {
+        return new ChapterItem
+        {
+            ChapterId = bmChapter.ChapterId,
+            MangaId = bmChapter.MangaId,
+            ChapterNumber = bmChapter.ChapterNumber,
+            Title = bmChapter.Title,
+            ChapterUrl = bmChapter.ChapterUrl
+        };
+    }
 }

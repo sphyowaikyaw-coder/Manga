@@ -48,13 +48,22 @@
                 <span>@Model.Chapters chapters</span>
             </div>
             <div class="release-list">
-                @foreach (var chapter in Enumerable.Range(1, Model.Chapters).Reverse())
+                @* @foreach (var chapter in Enumerable.Range(1, Model.Chapters).Reverse())
+                {
+                    <a class="release-row" asp-controller="Manga" asp-action="Read" asp-route-id="@Model.Id" asp-route-chapter="@chapter">
+                        <span class="release-title"><i class="fa fa-file-text-o"></i> Chapter @chapter</span>
+                        <span class="release-date">@ReleaseDate(chapter)</span>
+                    </a>
+                } *@
+
+                @foreach (var chapter in Model.ChapterList.OrderByDescending(x => x))
                 {
                     <a class="release-row" asp-controller="Manga" asp-action="Read" asp-route-id="@Model.Id" asp-route-chapter="@chapter">
                         <span class="release-title"><i class="fa fa-file-text-o"></i> Chapter @chapter</span>
                         <span class="release-date">@ReleaseDate(chapter)</span>
                     </a>
                 }
+
             </div>
         </div>
     </div>

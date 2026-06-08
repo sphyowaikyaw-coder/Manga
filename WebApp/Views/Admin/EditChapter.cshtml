@@ -1,0 +1,16 @@
+﻿@model WebApp.View_Model.ChapterFormViewModel
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "Edit Chapter";
+}
+
+
+<section class="content-band dashboard-band">
+    <div class="container">
+        <div class="section-heading">
+            <h2>Edit Manga</h2>
+            <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Back to Manga</a>
+        </div>
+        <partial name="_ChapterForm" model="Model" />
+    </div>
+</section>

@@ -2,6 +2,8 @@
 {
     public class ChapterItem
     {
+        public int ChapterId { get; set; }
+
         public int MangaId { get; set; }
 
         public decimal ChapterNumber { get; set; }
