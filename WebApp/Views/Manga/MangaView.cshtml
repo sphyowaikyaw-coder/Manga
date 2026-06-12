@@ -4,7 +4,11 @@
     ViewData["Title"] = "MangaVerse Library";
     var searchQuery = ViewData["SearchQuery"] as string ?? string.Empty;
     var showAllNew = ViewData["ShowAllNew"] as bool? == true;
-    var newManga = Model.OrderByDescending(manga => manga.Id).ToList();
+    // var newManga = Model.OrderByDescending(manga => manga.Id).ToList();
+    var newManga = Model
+    .OrderByDescending(m => m.ChapterLists.FirstOrDefault()?.CreatedAt ?? DateTime.MinValue)
+    .ToList();
+
     var visibleNewManga = showAllNew ? newManga : newManga.Take(12).ToList();
     var latest = Model.OrderByDescending(manga => manga.Id).ToList();
     var hot = Model.OrderByDescending(manga => manga.Views).Take(5).ToList();
@@ -18,56 +22,18 @@
             <input type="text" name="q" value="@searchQuery" id="searchBox" class="form-control" placeholder="Search manga, manhwa, manhua...">
             <div id="searchResults"
                  class="list-group position-absolute w-100"
-                 style="z-index:1000;">
+                 >
             </div>
             <button type="submit">Search</button>
         </form>
     </div>
 </section>
-<script>
-    document.getElementById("searchBox").addEventListener("keyup", function () {
 
-        let keyword = this.value;
-
-        // if (keyword.length < 1) {
-        //     document.getElementById("searchResults").innerHTML = "";
-        //     return;
-        // }
-
-        fetch(`/Manga/SearchManga?keyword=${keyword}`)
-            .then(response => response.json())
-            .then(data => {
-
-                let html = "";
-
-                data.forEach(manga => {
-
-                    html += `
-                        <a href="/Manga/Details/${manga.mangaId}"
-                           class="list-group-item list-group-item-action">
-
-                            <div class="d-flex align-items-center">
-                                <img src="${manga.coverImage}"
-                                     width="50"
-                                     height="70"
-                                     class="me-2">
-
-                                <span>${manga.title}</span>
-                            </div>
-
-                        </a>
-                    `;
-                });
-
-                document.getElementById("searchResults").innerHTML = html;
-            });
-    });
-</script>
 
 <section id="new" class="content-band compact-band">
     <div class="container">
         <div class="block-heading">
-            <h2>@(string.IsNullOrWhiteSpace(searchQuery) ? "New Manga Update" : $"Search Results for \"{searchQuery}\"")</h2>
+            <h2>@(string.IsNullOrWhiteSpace(searchQuery) ? "New Chapter Update" : $"Search Results for \"{searchQuery}\"")</h2>
             @if (!showAllNew && newManga.Count > 12)
             {
                 <a asp-controller="Manga" asp-action="Index" asp-route-q="@searchQuery" asp-route-showAllNew="true" asp-fragment="new">View All</a>
@@ -78,7 +44,8 @@
             {
                 <article class="update-card">
                     <a class="update-cover" asp-controller="Manga" asp-action="Details" asp-route-id="@manga.Id">
-                        <img src="@manga.CoverImageUrl" alt="@manga.Title">
+                        
+                        <img src="@Url.Content("~" + manga.CoverImageUrl)" alt="@manga.Title">
                         <span>NEW</span>
                     </a>
                     <div>

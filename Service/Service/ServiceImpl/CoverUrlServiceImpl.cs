@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Service.Service.ServiceImpl
@@ -11,6 +12,8 @@ namespace Service.Service.ServiceImpl
     {
         public async Task<string> SaveCoverUrl(IFormFile? file, string title, int mangaId)
         {
+            title = title.Replace(' ', '_');
+            title = Regex.Replace(title, @"[/:*?""<>|]", "_");
             var urlPath = $"/Mangas/{title}/{mangaId}/";
             var filePath = Path.Combine("wwwroot", "Mangas", title, mangaId.ToString());
 

@@ -6,6 +6,7 @@ public class ChapterUrlServiceImpl : ChapterUrlService
 {
     public async Task<string> SaveChapterUrl(IFormFile file,string title, int mangaId, int chapterNumber)
     {
+        title = title.Replace(' ', '_');
         var urlPath = $"/Mangas/{title}/{mangaId}/";
         var filePath = Path.Combine("wwwroot", "Mangas",title, mangaId.ToString());
 

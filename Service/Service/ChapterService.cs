@@ -15,5 +15,7 @@ namespace Service.Service
         public Task<bool> DeleteChapter(int id);
 
         public Task<int> GetChapterIDByChapterNumber(int mangaId, int chapterNumber);
+
+        public Task<List<BM_ChapterItem>> GetAllChapter();
     }
 }

@@ -94,7 +94,10 @@ public class AdminController(
         //    return View(manga);
         //}
         manga.CoverImageUrl = await coverUrlService.SaveCoverUrl(manga.CoverImage, manga.Title, manga.Id);
+
         await mangaService.CreateManga(MapToMangaBusinessModel(manga));
+
+
         TempData["AdminMessage"] = $"Saved: {manga.Title}.";
 
         return RedirectToAction(nameof(Manga));
@@ -259,7 +262,8 @@ public class AdminController(
             Status = manga.Status,
             Description = manga.Description,
             CoverImageUrl = manga.CoverImage,
-            
+            ReleaseYear = manga.ReleaseYear,
+            CreatedAt = manga.CreatedAt,
             Genres = manga.Genres,
             GenresText = string.Join(", ", manga.Genres),
             Chapters = manga.Chapters,
@@ -279,7 +283,8 @@ public class AdminController(
             Status = manga.Status,
             Description = manga.Description,
             CoverImage = manga.CoverImageUrl,
-
+            ReleaseYear = manga.ReleaseYear ?? 0,
+            CreatedAt = manga.CreatedAt,
             Genres = SplitGenres(manga.GenresText),
             Chapters = manga.Chapters,
             Views = manga.Views,
@@ -464,6 +469,7 @@ public class AdminController(
             MangaId = bmChapter.MangaId,
             ChapterNumber = bmChapter.ChapterNumber,
             Title = bmChapter.Title,
+            CreatedAt = bmChapter.CreatedAt,
             ChapterUrl = bmChapter.ChapterUrl
         };
     }

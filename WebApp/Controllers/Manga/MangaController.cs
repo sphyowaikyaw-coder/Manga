@@ -11,8 +11,51 @@ public class MangaController(MangaService mangaService, ChapterUrlService chapte
 {
     public async Task<IActionResult> Index(string? q = null, bool showAllNew = false)
     {
+        //var manga = await mangaService.GetAllManga();
+        //var ch = await chapterService.GetAllChapter();
+        //var chapter = ch.Select(x => new ChapterItem
+        //{
+        //    MangaId = x.MangaId,
+        //    ChapterNumber = x.ChapterNumber,
+        //    Title = x.Title ?? string.Empty,
+        //    ChapterUrl = x.ChapterUrl ?? string.Empty,
+        //    CreatedAt = x.CreatedAt
+        //}).ToList();
+        //var viewModel = manga.Select(MapToViewModel).ToList();
+        //MangaItem mangaItem = new MangaItem();
+        //mangaItem.ChapterLists = chapter.Where(x => x.MangaId == mangaItem.Id).ToList();
+        //viewModel.ForEach(m =>
+        //{
+        //    m.ChapterLists = chapter.Where(x => x.MangaId == m.Id).ToList();
+        //});
+
         var manga = await mangaService.GetAllManga();
+
+        // 2. Fetch all chapters, but immediately sort them by newest creation date
+        var ch = await chapterService.GetAllChapter();
+
+        // 3. Project chapters into your DTO/ViewModel
+        var chapter = ch.Select(x => new ChapterItem
+        {
+            MangaId = x.MangaId,
+            ChapterNumber = x.ChapterNumber,
+            Title = x.Title ?? string.Empty,
+            ChapterUrl = x.ChapterUrl ?? string.Empty,
+            CreatedAt = x.CreatedAt
+        }).ToList();
+
+        // 4. Map your manga models to ViewModels
         var viewModel = manga.Select(MapToViewModel).ToList();
+
+        // 5. Assign only the SINGLE LATEST chapter to each manga
+        viewModel.ForEach(m =>
+        {
+            m.ChapterLists = chapter
+                .Where(x => x.MangaId == m.Id)
+                .OrderByDescending(x => x.CreatedAt) // Order by newest date first
+                .Take(1)                             // Take only the single latest update
+                .ToList();
+        });
 
         viewModel = FilterManga(viewModel, q).ToList();
         ViewData["SearchQuery"] = q ?? string.Empty;
@@ -120,6 +163,7 @@ public class MangaController(MangaService mangaService, ChapterUrlService chapte
             Status = manga.Status,
             Description = manga.Description,
             CoverImageUrl = manga.CoverImage,
+            CreatedAt = manga.CreatedAt,
             Genres = manga.Genres,
             Chapters = manga.Chapters,
             Views = manga.Views,

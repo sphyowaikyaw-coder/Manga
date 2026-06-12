@@ -30,7 +30,8 @@ namespace Service.Service.ServiceImpl
                 MangaId = chapter.MangaId,
                 ChapterNumber = chapter.ChapterNumber ?? 0,
                 Title = chapter.Title ?? string.Empty,
-                ChapterUrl = chapter.ChapterUrl ?? string.Empty
+                ChapterUrl = chapter.ChapterUrl ?? string.Empty,
+                CreatedAt = chapter.CreatedAt
             };
         }
 
@@ -43,6 +44,12 @@ namespace Service.Service.ServiceImpl
         public async Task<int> GetChapterIDByChapterNumber(int mangaId, int chapterNumber)
         {
             return await chapterDAO.GetChapterIDByChapterNumber(mangaId, chapterNumber);
+        }
+
+        public async Task<List<BM_ChapterItem>> GetAllChapter()
+        {
+            var chapters = await chapterDAO.GetAllChapter();
+            return chapters.Select(MapToBusinessModel).ToList();
         }
     }
 

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <Folder Include="Views\NewFolder\" />
-    <Folder Include="wwwroot\Design\" />
   </ItemGroup>
 
 </Project>

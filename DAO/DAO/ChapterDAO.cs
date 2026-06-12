@@ -15,5 +15,7 @@ namespace DAO.DAO
         public Task<bool> DeleteChapter(int id);
 
         public Task<int> GetChapterIDByChapterNumber(int mangaId, int chapterNumber);
+
+        public Task<List<Chapter>> GetAllChapter();
     }
 }

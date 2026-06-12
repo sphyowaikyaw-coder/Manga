@@ -10,5 +10,7 @@ public class BM_ChapterItem
 
     public string Title { get; set; } = string.Empty;
 
+    public DateTime? CreatedAt { get; set; }
+
     public string ChapterUrl { get; set; } = string.Empty;
 }

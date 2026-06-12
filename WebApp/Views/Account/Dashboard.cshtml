@@ -19,15 +19,93 @@
             <div class="manga-grid compact-grid">
                 @foreach (var manga in Model)
                 {
-                    <article class="manga-card">
-                        <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id" class="cover" style="background-image: url('@manga.CoverImageUrl')">
+                    @* <article class="manga-card">
+                        <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id" class="cover" style="background-image: url('@Url.Content("~" + manga.CoverImageUrl)')">
+                           
                             <span>Continue</span>
                         </a>
                         <div class="card-copy">
                             <h3>@manga.Title</h3>
                             <p>Chapter @(Math.Max(1, manga.Chapters - 2))</p>
                         </div>
+                    </article> *@
+
+                   @*  <article class="card h-100 border-0 shadow-sm bg-white rounded overflow-hidden">
+                        <!-- Image block container with a square 1x1 ratio aspect layer -->
+                        <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id"
+                           class="ratio ratio-1x1 position-relative d-block">
+
+                            <!-- The Cover Image acting as the image canvas -->
+                            <img src="@Url.Content("~" + manga.CoverImageUrl)"
+                                 class="w-100 h-100 object-fit-cover"
+                                 alt="@manga.Title Cover">
+
+                            <!-- "Continue" dark indicator badge pinned to the bottom-left corner -->
+                            <span class="position-absolute bottom-0 start-0 m-2 px-2 py-1 bg-dark text-white rounded small small-text text-uppercase fw-bold opacity-90 text-danger">Continue</span>
+                        </a>
+
+                        <!-- Padded bottom panel matching your typographic theme properties -->
+                        <div class="p-3">
+                            <h3 class="h6 fw-bold mb-1 text-dark">@manga.Title</h3>
+                            <p class="small text-secondary mb-0">Chapter @(Math.Max(1, manga.Chapters - 2))</p>
+                        </div>
+                    </article> *@
+
+                    <article class="card h-100 border-0 shadow-sm bg-white rounded overflow-hidden">
+                        <!-- Image block container with a square 1x1 ratio aspect layer -->
+                        <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id"
+                           class="ratio ratio-1x1 d-block text-decoration-none">
+
+                            <!-- The Cover Image acting as the image canvas -->
+                            <img src="@Url.Content("~" + manga.CoverImageUrl)"
+                                 class="w-100 h-100 object-fit-cover"
+                                 alt="@manga.Title Cover"> 
+
+                            @* <img src="@Url.Content("~" + manga.CoverImageUrl)"
+                                 class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
+                                 alt="@manga.Title Cover">  *@
+
+                            <span class="position-absolute bottom-0 start-50 translate-middle-x mb-2 px-2 py-1 bg-dark text-white rounded fw-bold text-uppercase"
+                                  style="font-size: 0.65rem; z-index: 5; white-space: nowrap;">Continue</span>
+
+
+
+                        </a>
+
+                        <!-- Padded bottom panel matching your typographic theme properties -->
+                        <div class="p-3">
+                            <!-- The Continue Button now displays cleanly underneath the image block -->
+                           
+
+                            <h3 class="h6 fw-bold mb-1 text-dark text-truncate">@manga.Title</h3>
+                            <p class="small text-secondary mb-0">Chapter @(Math.Max(1, manga.Chapters - 2))</p>
+                        </div>
                     </article>
+
+                    @* <article class="card h-100 border-0 shadow-sm bg-white rounded overflow-hidden">
+                        <!-- Anchor tag ??? 1x1 ???????????? ???????????? ??????? Layout Container ?????????? ???????????? -->
+                        <a asp-controller="Manga" asp-action="Read" asp-route-id="@manga.Id"
+                           class="ratio ratio-1x1 d-block position-relative text-decoration-none">
+
+                            <!-- ?????????? ?????????? ????????????? Background ????? ???????????? -->
+                            <img src="@Url.Content("~" + manga.CoverImageUrl)"
+                                 class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
+                                 alt="@manga.Title Cover">
+
+                            <!-- ?????????? ???????? (????????-????????) ??? "Continue" ???????? ???????????????? ??????????? -->
+                            <span class="position-absolute bottom-0 start-50 translate-middle-x mb-2 px-2 py-1 bg-dark text-white rounded fw-bold text-uppercase"
+                                  style="font-size: 0.65rem; z-index: 5; white-space: nowrap;">Continue</span>
+                        </a>
+
+                        <!-- Manga ?????????????? ?????????????????? ???????? Text Panel ??????? -->
+                        <div class="p-3">
+                            <h3 class="h6 fw-bold mb-1 text-dark text-truncate">@manga.Title</h3>
+                            <p class="small text-secondary mb-0">Chapter @(Math.Max(1, manga.Chapters - 2))</p>
+                        </div>
+                    </article> *@
+
+                    
+
                 }
             </div>
         </div>

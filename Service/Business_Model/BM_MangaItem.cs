@@ -12,6 +12,10 @@ public class BM_MangaItem
 
     public string Description { get; set; } = string.Empty;
 
+    public int ReleaseYear { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
     public string CoverImage { get; set; } = string.Empty;
 
     public string[] Genres { get; set; } = [];

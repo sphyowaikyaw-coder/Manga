@@ -51,9 +51,9 @@
                         <a class="table-action" asp-controller="Admin" asp-action="AddChapter" asp-route-mangaId="@manga.Id">Add Chapter</a>
                         <a class="table-action" asp-controller="Admin" asp-action="ChapterLists" asp-route-Id="@manga.Id">Chapter Lists</a>
 
-                        <button class="table-action" onclick="deleteChapter(@manga.Id)" style="color: red; border: none; background: none;">Delete Chapter</button>
+                        <button id="deleteChapter" data-id="@manga.Id" class="delete-chapter-btn table-action text-danger bg-transparent border-0">Delete Chapter</button>
 
-                        <button class="table-action" onclick="deleteManga(@manga.Id)" style="color: red; border: none; background: none;">Delete</button>
+                        <button id="deleteManga" data-id="@manga.Id" class="delete-manga-btn table-action text-danger bg-transparent border-0">Delete</button>
 
                     </span>
                 </div>
@@ -69,14 +69,15 @@
 
 <script>
 
+
     document.getElementById("searchBox").addEventListener("keyup", function () {
 
         let keyword = this.value;
 
-        // if (keyword.length < 1) {
-        //     document.getElementById("searchResults").innerHTML = "";
-        //     return;
-        // }
+        if (keyword.length < 1) {
+            document.getElementById("searchResults").innerHTML = "";
+            return;
+        }
 
         fetch(`/Manga/SearchManga?keyword=${keyword}`)
             .then(response => response.json())
@@ -106,6 +107,31 @@
                 document.getElementById("searchResults").innerHTML = html;
             });
     });
+
+    // document.getElementById("deleteChapter").addEventListener("click", function () {
+    //     let mangaId = this.getAttribute("data-id");
+    //     deleteChapter(mangaId);
+    // });
+
+    document.querySelectorAll(".delete-chapter-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let mangaId = this.getAttribute("data-id");
+            deleteChapter(mangaId);
+        });
+    });
+
+    // document.getElementById("deleteManga").addEventListener("click", function () {
+    //     let mangaId = this.getAttribute("data-id");
+    //     deleteManga(mangaId);
+    // });
+
+     document.querySelectorAll(".delete-manga-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let mangaId = this.getAttribute("data-id");
+            deleteManga(mangaId);
+        });
+    });
+
 
     async function deleteManga(mangaId) {
         const result = await Swal.fire({
@@ -166,14 +192,16 @@
                 chapterNumber: chapterNo
             })
         })
-        .then(res => res.json())
-        .then(data => {
-            Swal.fire('Success', data.message, 'success');
-        }).then((result) => {
-
-        if (result.isConfirmed) {
-            location.reload();
-        }
+            .then(res => res.json())
+          .then(data => {
+        
+        Swal.fire('Success', data.message, 'success')
+        .then((result) => {
+          
+            if (result.isConfirmed || result.isDismissed) {
+                location.reload();
+            }
         });
+    });
     }
 </script>

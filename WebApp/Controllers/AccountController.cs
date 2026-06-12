@@ -127,6 +127,8 @@ public class AccountController(UserService userService, MangaService mangaServic
             Status = manga.Status,
             Description = manga.Description,
             CoverImageUrl = manga.CoverImage,
+            ReleaseYear = manga.ReleaseYear,
+            CreatedAt = manga.CreatedAt,
             Genres = manga.Genres,
             Chapters = manga.Chapters,
             Views = manga.Views,

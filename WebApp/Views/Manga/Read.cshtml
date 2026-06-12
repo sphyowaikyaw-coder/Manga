@@ -20,7 +20,7 @@
 </section>
 
 <section class="reader-page">
-    <div class="container page-stack">
+    <div class="container page-stack" style="width: 120%;">
         @* <div class="manga-page" style="background-image: url('@Model.')">
             <span>Page 01</span>
         </div>
@@ -38,6 +38,6 @@
             
             
         </div>
-        <iframe src="@Model.Chapter.ChapterUrl" style="width: 100%; height: 800px; zoom: 100%;"></iframe>
+        <iframe src="@Model.Chapter.ChapterUrl" class="w-100 pdf-viewer-frame"</iframe>
     </div>
 </section>
