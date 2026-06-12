@@ -64,9 +64,7 @@ builder.Services.Configure<IpRateLimitOptions>(options =>
 });
 var app = builder.Build();
 
-app.UseMiddleware<CSPMiddleware>();
 
-app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -76,6 +74,17 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<CSPMiddleware>();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseIpRateLimiting(); 
 //app.UseAntiforgery();
 app.MapControllerRoute(
