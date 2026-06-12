@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using System.Text.RegularExpressions;
 
 namespace Service.Service.ServiceImpl;
 
@@ -7,6 +8,7 @@ public class ChapterUrlServiceImpl : ChapterUrlService
     public async Task<string> SaveChapterUrl(IFormFile file,string title, int mangaId, int chapterNumber)
     {
         title = title.Replace(' ', '_');
+        title = Regex.Replace(title, @"[/:*?""<>|]", "_");
         var urlPath = $"/Mangas/{title}/{mangaId}/";
         var filePath = Path.Combine("wwwroot", "Mangas",title, mangaId.ToString());
 
