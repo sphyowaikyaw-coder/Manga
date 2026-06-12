@@ -32,7 +32,7 @@ pipeline {
                 powershell '''
                     Import-Module WebAdministration -ErrorAction SilentlyContinue
                     
-                    $siteName = "bookstore"
+                    $siteName = "MangaVerse"
                     $appPoolName = "DefaultAppPool"
                     $sitePath = "D:\\mangapublish"
                     $sitePort = 8000
