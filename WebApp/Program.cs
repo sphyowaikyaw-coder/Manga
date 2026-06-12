@@ -1,9 +1,10 @@
+using AspNetCoreRateLimit;
+using Dependency;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
-using Dependency;
 using WebApp.Middleware;
-using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 var dataProtectionDirectory = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "App_Data", "Keys"));
@@ -37,7 +38,7 @@ builder.Services
         options.AccessDeniedPath = "/Account/AccessDenied";
         options.Cookie.Name = "MangaVerse.Auth";
         options.Cookie.SameSite = SameSiteMode.Strict;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     });
 builder.Services.AddAuthorization();
 builder.Services.AddMemoryCache();
@@ -70,14 +71,17 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    //app.UseHsts();
 }
 
 //app.UseHttpsRedirection();
 app.UseMiddleware<CSPMiddleware>();
 
 app.UseStaticFiles();
-app.UseForwardedHeaders();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
+});
 app.UseRouting();
 
 
