@@ -34,8 +34,8 @@ pipeline {
                     
                     $siteName = "bookstore"
                     $appPoolName = "DefaultAppPool"
-                    $sitePath = "D:\\bookstorepublish"
-                    $sitePort = 9000
+                    $sitePath = "D:\\mangapublish"
+                    $sitePort = 8000
                     
                     # Create directory if needed
                     if (-not (Test-Path $sitePath)) {
