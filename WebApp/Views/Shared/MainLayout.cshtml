@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@(ViewData["Title"] ?? "MangaVerse")</title>
-    <link rel="stylesheet" href="~/Design/css/bootstrap.min.css" type="text/css" asp-append-version="true">
-    <link rel="stylesheet" href="~/Design/css/font-awesome.min.css" type="text/css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/mangaverse.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/page.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/Design/css/bootstrap.min.css" type="text/css" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"/>
+    <link rel="stylesheet" href="~/Design/css/font-awesome.min.css" type="text/css" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"/>
+    <link rel="stylesheet" href="~/css/mangaverse.css" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"/>
+    <link rel="stylesheet" href="~/css/page.css" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"/>
 
-    <link rel="stylesheet" type="text/css" href="~/lib/sweetalert2/dist/sweetalert2.min.css" asp-append-version="true" />
-    <script src="~/lib/sweetalert2/dist/sweetalert2.min.js" asp-append-version="true"></script>
-    <link rel="stylesheet" type="text/css" href="~/lib/font-awesome/all.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/lib/sweetalert2/dist/sweetalert2.min.css" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"/>
+    <script src="~/lib/sweetalert2/dist/sweetalert2.min.js" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"></script>
+    <link rel="stylesheet" type="text/css" href="~/lib/font-awesome/all.css" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]" />
     
-    <script src="~/Design/js/search.js" asp-append-version="true"></script>
+    <script src="~/Design/js/search.js" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"></script>
 
 </head>
 <body>
@@ -68,8 +68,8 @@
         </div>
     </footer>
 
-    <script src="~/Design/js/jquery-3.3.1.min.js" asp-append-version="true"></script>
-    <script src="~/Design/js/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"></script>
+    <script src="~/Design/js/bootstrap.min.js" asp-append-version="true" nonce="@Context.Items["CSP-Nonce"]"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

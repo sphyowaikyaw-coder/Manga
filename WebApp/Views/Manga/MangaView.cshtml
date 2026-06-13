@@ -120,7 +120,7 @@
 </section>
 
 @section Scripts {
-    <script>
+    <script nonce="@Context.Items["CSP-Nonce"]">
         (() => {
             const button = document.querySelector("[data-load-more-latest]");
             const rows = Array.from(document.querySelectorAll("[data-latest-row]"));

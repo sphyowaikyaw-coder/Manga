@@ -12,6 +12,12 @@ dataProtectionDirectory.Create();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.ConstraintMap["hash"] = typeof(HashRoute);
+});
+
 builder.Services.AddDbContext<MangaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MangaDatabase")
         ?? "Server=DESKTOP-GB6LURR;Database=Manga;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;"));
@@ -74,7 +80,7 @@ if (!app.Environment.IsDevelopment())
     //app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseMiddleware<CSPMiddleware>();
 
 app.UseStaticFiles();
@@ -89,10 +95,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseIpRateLimiting(); 
-//app.UseAntiforgery();
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Manga}/{action=Index}/{id?}");
+//app.UseIpRateLimiting();
+app.UseAntiforgery();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller:hash}/{action:hash}",
+        defaults: new { controller = "Manga", action = "Index" });
+});
 
 app.Run();

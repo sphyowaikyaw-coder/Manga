@@ -67,7 +67,7 @@
 
 </section>
 
-<script>
+<script nonce="@Context.Items["CSP-Nonce"]">
 
 
     document.getElementById("searchBox").addEventListener("keyup", function () {
@@ -107,11 +107,12 @@
                 document.getElementById("searchResults").innerHTML = html;
             });
     });
-
     // document.getElementById("deleteChapter").addEventListener("click", function () {
     //     let mangaId = this.getAttribute("data-id");
     //     deleteChapter(mangaId);
     // });
+
+    document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".delete-chapter-btn").forEach(button => {
         button.addEventListener("click", function () {
@@ -119,6 +120,8 @@
             deleteChapter(mangaId);
         });
     });
+    })
+
 
     // document.getElementById("deleteManga").addEventListener("click", function () {
     //     let mangaId = this.getAttribute("data-id");
@@ -142,8 +145,9 @@
             confirmButtonText: 'Delete',
             cancelButtonText: 'Cancel'
         });
+        const url = "@Url.Action("DeleteManga", "Admin")";
         if (!result.isConfirmed) return;
-            fetch('/Admin/DeleteManga', {
+            fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -182,7 +186,8 @@
 
         let chapterNo = result.value;
 
-        fetch('/Admin/DeleteChapter', {
+        const url = "@Url.Action("DeleteChapter", "Admin")";
+        fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
