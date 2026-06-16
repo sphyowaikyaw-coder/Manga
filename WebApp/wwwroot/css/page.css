@@ -1,5 +1,26 @@
 ﻿.pdf-viewer-frame {
-    height: 800px;
-    zoom: 100%;
-    border: none;
+/*    zoom: 100%;*/
+    -ms-zoom: inherit;
+    zoom: 90%;
+}
+
+/* Keeps the overall container box fixed to the screen scale */
+.manga-crop-window {
+    position: relative;
+    width: 100%;
+    height: calc(85vh - 70px); /* Adjusts to fit your top header height */
+    overflow: hidden; /* Cuts off anything outside the boundaries */
+    background: ;
+    box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    
+}
+
+/* Modifies the iframe geometry to crop out the top 56px toolbar */
+.manga-cropped-frame {
+    position: absolute;
+    /*top: -56px;*/ /* Shifts the frame up to completely hide the top gray control panel */
+    left: 0;
+    width: 100%;
+    height: calc(90% + 60px); /* Adds back the missing height to prevent layout stretching */
+    border: none !important;
 }

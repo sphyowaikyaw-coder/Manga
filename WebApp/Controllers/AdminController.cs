@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Business_Model;
 using Service.Service;
+using System.Text.RegularExpressions;
 using WebApp.View_Model;
+using System.Text.RegularExpressions;
 
 namespace WebApp.Controllers;
 
@@ -182,38 +184,121 @@ public class AdminController(
 
     //chapter{manga.Chapters + 1}/
 
+    //[HttpPost]
+    //[ValidateAntiForgeryToken]
+    //public async Task<IActionResult> AddChapter(ChapterFormViewModel chapter)
+    //{
+    //    if (!ModelState.IsValid)
+    //    {
+    //        return View(chapter);
+    //    }
+
+
+    //    var chapterUrl = await chapterUrlService.SaveChapterUrl(
+    //        chapter.PageImages,
+    //        chapter.MangaTitle,
+    //        chapter.MangaId,
+    //        chapter.ChapterNumber);
+    //    var saved = await mangaService.AddChapter(new BM_ChapterItem
+    //    {
+    //        MangaId = chapter.MangaId,
+    //        ChapterNumber = chapter.ChapterNumber,
+    //        Title = chapter.Title,
+    //        ChapterUrl = chapterUrl
+    //    });
+
+    //    if (!saved)
+    //    {
+    //        return NotFound();
+    //    }
+
+    //    TempData["AdminMessage"] = $"Chapter saved: {chapter.MangaTitle} chapter {chapter.ChapterNumber}";
+
+    //    return RedirectToAction(nameof(Manga));
+    //}
+
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [RequestSizeLimit(524288000)] // Extends request allowance to 500MB for batch uploads
     public async Task<IActionResult> AddChapter(ChapterFormViewModel chapter)
     {
-        if (!ModelState.IsValid)
+        // 1. Structural Fail-Safe Check
+        // Bypass strict ModelState.IsValid since the UI form elements for Title/Number are omitted
+        if (chapter.MangaId <= 0 || chapter.PageImages == null || !chapter.PageImages.Any())
         {
+            ModelState.AddModelError("PageImages", "Target Manga selection or uploaded documents are missing.");
             return View(chapter);
         }
 
+        int successCount = 0;
+        List<string> failedFilesList = new List<string>();
 
-        var chapterUrl = await chapterUrlService.SaveChapterUrl(
-            chapter.PageImages,
-            chapter.MangaTitle,
-            chapter.MangaId,
-            chapter.ChapterNumber);
-        var saved = await mangaService.AddChapter(new BM_ChapterItem
+        // 2. Loop through every uploaded file
+        foreach (var file in chapter.PageImages)
         {
-            MangaId = chapter.MangaId,
-            ChapterNumber = chapter.ChapterNumber,
-            Title = chapter.Title,
-            ChapterUrl = chapterUrl
-        });
+            if (file.Length == 0) continue;
 
-        if (!saved)
-        {
-            return NotFound();
+            // 3. Extract the sequence number from filename using Regex
+            // Looks for the first contiguous block of numbers (e.g., "Ch_84.pdf" -> 84, "001.pdf" -> 1)
+            var match = Regex.Match(file.FileName, @"\d+");
+
+            if (!match.Success)
+            {
+                failedFilesList.Add($"{file.FileName} (Reason: No number found in filename)");
+                continue;
+            }
+
+            int extractedChapterNumber = int.Parse(match.Value);
+            string fallbackTitle = $"Chapter {extractedChapterNumber}";
+
+            try
+            {
+                // 4. Save file payload to physical/cloud target paths via your service layer
+                var chapterUrl = await chapterUrlService.SaveChapterUrl(
+                    file,
+                    chapter.MangaTitle,
+                    chapter.MangaId,
+                    extractedChapterNumber);
+
+                // 5. Commit record to your database Context
+                var saved = await mangaService.AddChapter(new BM_ChapterItem
+                {
+                    MangaId = chapter.MangaId,
+                    ChapterNumber = extractedChapterNumber,
+                    Title = fallbackTitle,
+                    ChapterUrl = chapterUrl
+                });
+
+                if (saved)
+                {
+                    successCount++;
+                }
+                else
+                {
+                    failedFilesList.Add($"{file.FileName} (Reason: Database insertion rejected)");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Capture file stream errors, permission locks, or validation rejections
+                failedFilesList.Add($"{file.FileName} (Error: {ex.Message})");
+            }
         }
 
-        TempData["AdminMessage"] = $"Chapter saved: {chapter.MangaTitle} chapter {chapter.ChapterNumber}";
+        // 6. Build response state messages
+        if (failedFilesList.Any())
+        {
+            TempData["AdminMessage"] = $"Processed {successCount} chapters successfully. Errors: {string.Join(", ", failedFilesList)}";
+        }
+        else
+        {
+            TempData["AdminMessage"] = $"Successfully batched and built {successCount} chapters for '{chapter.MangaTitle}'!";
+        }
 
+        // Redirect back to your base dashboard view grid
         return RedirectToAction(nameof(Manga));
     }
+
 
     [HttpGet]
     public async Task<IActionResult> EditUser(int id)
@@ -340,9 +425,10 @@ public class AdminController(
             // Header
             worksheet.Cell(1, 1).Value = "Id";
             worksheet.Cell(1, 2).Value = "Title";
-            worksheet.Cell(1, 4).Value = "Description";
+            worksheet.Cell(1, 5).Value = "Description";
+            worksheet.Cell(1, 4).Value = "Status";
             worksheet.Cell(1, 3).Value = "Author";
-            worksheet.Cell(1, 5).Value = "Genres";
+            worksheet.Cell(1, 6).Value = "Genres";
             int row = 2;
 
             foreach (var manga in mangas)
@@ -350,8 +436,9 @@ public class AdminController(
                 worksheet.Cell(row, 1).Value = manga.Id;
                 worksheet.Cell(row, 2).Value = manga.Title;
                 worksheet.Cell(row, 3).Value = manga.Author;
-                worksheet.Cell(row, 4).Value = manga.Description;
-                worksheet.Cell(row, 5).Value = string.Join(", ", manga.Genres);
+                worksheet.Cell(row, 4).Value = manga.Status;
+                worksheet.Cell(row, 5).Value = manga.Description;
+                worksheet.Cell(row, 6).Value = string.Join(", ", manga.Genres);
 
 
                 row++;
@@ -391,44 +478,59 @@ public class AdminController(
 
             foreach (var row in rows)
             {
-                int id = int.Parse(row.Cell(1).GetString() ?? "0");
+                // 1. Safely extract values from the row
+                string idRaw = row.Cell(1).GetString()?.Trim();
                 string title = row.Cell(2).GetString();
                 string Author = row.Cell(3).GetString();
-                string description = row.Cell(4).GetString();
-                string genresText = row.Cell(5).GetString();
+                string Status = row.Cell(4).GetString();
+                string description = row.Cell(5).GetString();
+                string genresText = row.Cell(6).GetString();
                 string[] genres = SplitGenres(genresText);
 
+                // 2. Skip completely blank rows that Excel sometimes includes at the bottom
+                if (string.IsNullOrEmpty(idRaw) && string.IsNullOrEmpty(title) && string.IsNullOrEmpty(Author))
+                {
+                    continue;
+                }
 
-                
-                var existingManga = await mangaService.GetMangaById(id);
+                BM_MangaItem existingManga = null;
 
+                // 3. Only look up by ID if the ID cell is not empty and is a valid number
+                if (!string.IsNullOrEmpty(idRaw) && int.TryParse(idRaw, out int id))
+                {
+                    existingManga = await mangaService.GetMangaById(id);
+                }
+
+                // 4. Update or Insert logic
                 if (existingManga != null)
                 {
-                    
+                    // Update existing record
                     existingManga.Title = title;
                     existingManga.Author = Author;
+                    existingManga.Status = Status;
                     existingManga.Description = description;
                     existingManga.Genres = genres;
-                    
 
                     await mangaService.UpdateManga(existingManga);
                     TempData["AdminMess"] = $"Updated: Successful";
                 }
                 else
                 {
-                    
+                    // Insert new record (Database handles auto-increment automatically)
                     BM_MangaItem newBook = new BM_MangaItem
                     {
                         Title = title,
                         Author = Author,
-                        Genres = genres,    
+                        Status = Status,
+                        Genres = genres,
                         Description = description,
-                        
                     };
 
                     await mangaService.CreateManga(newBook);
+                    TempData["AdminMess"] = $"Inserted: Successful";
                 }
             }
+
         }
         return RedirectToAction(nameof(Index));
     }

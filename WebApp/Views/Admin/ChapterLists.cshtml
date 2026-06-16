@@ -49,9 +49,9 @@
                     
                     <span class="table-actions">
                         <a class="table-action" asp-controller="Admin" asp-action="EditChapter" asp-route-Chapterid=@chapter.ChapterId>Edit Chapter</a>
-                       
 
-                        <button class="table-action" onclick="deleteChapter(@chapter.ChapterId) style="color: red; border: none; background: none;">Delete Chapter</button>
+
+                        <button class="table-action delete-chapter-btn text-danger bg-transparent border-0">Delete Chapter</button>
 
 
                     </span>
@@ -67,6 +67,12 @@
 </section>
 
 <script>
+    document.querySelectorAll(".delete-chapter-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let mangaId = this.getAttribute("data-id");
+            deleteChapter(mangaId);
+        });
+    });
 
     document.getElementById("searchBox").addEventListener("keyup", function () {
 

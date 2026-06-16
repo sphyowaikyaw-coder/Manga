@@ -19,8 +19,8 @@
     </div>
 </section>
 
-<section class="reader-page">
-    <div class="container page-stack" style="width: 120%;">
+<section class="reader-page mw-100 mb-1">
+    <div class="container page-stack mw-100 manga-crop-window ">
         @* <div class="manga-page" style="background-image: url('@Model.')">
             <span>Page 01</span>
         </div>
@@ -32,12 +32,15 @@
         <div class="manga-page" style="background-image: url('@Model.CoverImageUrl')">
             <span>Page 03</span>
         </div> *@
-        <div>
+       @* <div class="mb-1 text-w">
             <h2>@Model.Title - Chapter @chapter</h2>
-            @* <p>@Model.Description</p> *@
+         @*<p>@Model.Description</p> *@
             
-            
-        </div>
-        <iframe src="@Model.Chapter.ChapterUrl" class="w-100 pdf-viewer-frame"</iframe>
+             
+        @* </div> *@ 
+        <iframe src="@Model.Chapter.ChapterUrl" class="w-100 pdf-viewer-frame manga-cropped-frame"></iframe>
     </div>
 </section>
+ 
+
+

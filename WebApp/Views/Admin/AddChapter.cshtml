@@ -1,4 +1,4 @@
-@model WebApp.View_Model.ChapterFormViewModel
+@* @model WebApp.View_Model.ChapterFormViewModel
 @{
     Layout = "MainLayout";
     ViewData["Title"] = "Add Chapter";
@@ -36,6 +36,52 @@
             <p class="field-help">Select chapter pdf file.</p>
             <div class="form-actions">
                 <button class="pill-button" type="submit">Save Chapter</button>
+                <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@
+
+
+@model WebApp.View_Model.ChapterFormViewModel
+@{
+    Layout = "MainLayout";
+    ViewData["Title"] = "Add Chapters";
+}
+
+<section class="content-band dashboard-band">
+    <div class="container">
+        <div class="section-heading">
+            <h2>Add Multiple Chapters (Bulk Upload)</h2>
+            <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Back to Manga</a>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="admin-form">
+            @Html.AntiForgeryToken()
+            <input asp-for="MangaId" type="hidden">
+            <input asp-for="MangaTitle" type="hidden">
+
+            <div class="form-note">
+                Uploading chapters to <strong>@Model.MangaTitle</strong>
+                <br />
+                <small style="color: #666;">Note: Please name your files containing the chapter number (e.g., "Ch_01.pdf", "Chapter 2.pdf", "03.pdf").</small>
+            </div>
+
+            <div class="form-grid">
+                <div>
+                    <label asp-for="PageImages">Select Chapter PDF Files</label>
+                    <!-- Added the 'multiple' attribute here -->
+                    <input asp-for="PageImages" type="file" multiple accept=".pdf" class="form-control h-auto">
+                    <span asp-validation-for="PageImages"></span>
+                    <p class="field-help">You can select multiple PDF files at once using Ctrl or Shift keys.</p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="pill-button" type="submit">Save All Chapters</button>
                 <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Cancel</a>
             </div>
         </form>

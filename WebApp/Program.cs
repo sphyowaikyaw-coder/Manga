@@ -31,7 +31,11 @@ builder.Services.AddScoped<Service.Service.UserService, Service.Service.ServiceI
 builder.Services.AddScoped<DAO.DAO.ChapterDAO, DAO.DAO.DAOImpl.ChapterDAOImpl>();
 builder.Services.AddScoped<Service.Service.ChapterService, Service.Service.ServiceImpl.ChapterServiceImpl>();
 
-
+// Allow larger form uploads (e.g., set limit to 250 Megabytes)
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 262144000; // 250 MB
+});
 
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(dataProtectionDirectory)
@@ -81,7 +85,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseMiddleware<CSPMiddleware>();
+//app.UseMiddleware<CSPMiddleware>();
 
 app.UseStaticFiles();
 app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -89,6 +93,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
 });
 app.UseRouting();
+
+
 
 
 
@@ -105,5 +111,7 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller:hash}/{action:hash}",
         defaults: new { controller = "Manga", action = "Index" });
 });
+
+
 
 app.Run();

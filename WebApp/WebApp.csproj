@@ -10,9 +10,5 @@
     <ProjectReference Include="..\Dependency\Dependency.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\NewFolder\" />
-  </ItemGroup>
-
+	
 </Project>
