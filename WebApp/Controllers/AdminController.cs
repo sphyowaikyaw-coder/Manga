@@ -27,6 +27,8 @@ public class AdminController(
 
         return View(manga.Select(MapToMangaViewModel).ToList());
     }
+
+    [HttpPost]
     public async Task<IActionResult> ClickManga(int id)
     {
         if (id == 0)

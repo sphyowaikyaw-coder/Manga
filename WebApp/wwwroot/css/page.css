@@ -1,7 +1,7 @@
 ﻿.pdf-viewer-frame {
-/*    zoom: 100%;*/
+    zoom: 100%;
     -ms-zoom: inherit;
-    zoom: 90%;
+    zoom: inherit;
 }
 
 /* Keeps the overall container box fixed to the screen scale */

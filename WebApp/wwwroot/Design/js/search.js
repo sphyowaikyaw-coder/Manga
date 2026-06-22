@@ -14,14 +14,15 @@ document.addEventListener("DOMContentLoaded", function () {
             searchResults.innerHTML = "";
             return;
         }
-
-        fetch(`/Manga/SearchManga?keyword=${keyword}`)
+        const baseUrl = '/Manga/SearchManga';
+        fetch(`${baseUrl}?keyword=${keyword}`)
             .then(response => response.json())
             .then(data => {
                 let html = "";
+                const detailsUrl = '/Manga/Details';
                 data.forEach(manga => {
                     html += `
-                        <a href="/Manga/Details/${manga.mangaId}" class="list-group-item list-group-item-action">
+                        <a href="${detailsUrl}?id=${manga.mangaId}" class="list-group-item list-group-item-action">
                             <div class="d-flex align-items-center">
                                 <img src="${manga.coverImage}" width="50" height="70" class="me-2">
                                 <span>${manga.title}</span>

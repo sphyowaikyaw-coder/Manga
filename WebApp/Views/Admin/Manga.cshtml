@@ -16,17 +16,18 @@
             
         </div>
         <form class="admin-search" asp-controller="Admin" asp-action="Manga" method="get">
-            <input type="search" id="searchBox" name="q" value="@searchQuery" placeholder="Search by title, author, status, genre">
-            <div id="searchResults"
-                 class="list-group position-absolute w-100"
-                 style="z-index:1000; top: 200px;">
-            </div>
+            <input type="search" id="AdminsearchBox" name="q" value="@searchQuery" placeholder="Search by title, author, status, genre">
+           
             <button class="pill-button" type="submit">Search</button>
             @if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 <a class="ghost-button" asp-controller="Admin" asp-action="Manga">Clear</a>
             }
         </form>
+        <div id="AdminsearchResults"
+             class="list-group position-absolute w-50 bg-white"
+             style="z-index:1000; top: 200px;">
+        </div>
         @if (TempData["AdminMessage"] is string message)
         {
             <div class="admin-alert">@message</div>
@@ -70,47 +71,53 @@
 <script nonce="@Context.Items["CSP-Nonce"]">
 
 
-    document.getElementById("searchBox").addEventListener("keyup", function () {
-
-        let keyword = this.value;
-
-        if (keyword.length < 1) {
-            document.getElementById("searchResults").innerHTML = "";
-            return;
-        }
-
-        fetch(`/Manga/SearchManga?keyword=${keyword}`)
-            .then(response => response.json())
-            .then(data => {
-
-                let html = "";
-
-                data.forEach(manga => {
-
-                    html += `
-                        <a href="/Admin/ClickManga/${manga.mangaId}"
-                           class="list-group-item list-group-item-action">
-
-                            <div class="d-flex align-items-center">
-                                <img src="${manga.coverImage}"
-                                     width="50"
-                                     height="70"
-                                     class="me-2">
-
-                                <span>${manga.title}</span>
-                            </div>
-
-                        </a>
-                    `;
-                });
-
-                document.getElementById("searchResults").innerHTML = html;
-            });
-    });
     // document.getElementById("deleteChapter").addEventListener("click", function () {
     //     let mangaId = this.getAttribute("data-id");
     //     deleteChapter(mangaId);
     // });
+
+        document.getElementById("AdminsearchBox").addEventListener("keyup", function () {
+
+        let keyword = this.value.trim();
+
+        if (keyword.length < 1) {
+            document.getElementById("AdminsearchResults").innerHTML = "";
+            return;
+        }
+
+        const baseUrl = "@Url.Action("SearchManga", "Manga")";
+
+        fetch(`${baseUrl}?keyword=${encodeURIComponent(keyword)}`)
+            .then(response => response.json())
+            .then(data => {
+                let html = "";
+                const detailBaseUrl = "@Url.Action("ClickManga", "Admin")";
+
+                data.forEach(manga => {
+                    // Use a standard form layout for each search result
+                    html += `
+                        <form action="${detailBaseUrl}" method="post" class="d-inline w-100">
+                            <input type="hidden" name="id" value="${manga.mangaId}" />
+
+                            <button type="submit" class="list-group-item list-group-item-action text-start border-0 bg-transparent w-100 p-3">
+                                <div class="d-flex align-items-center">
+                                    <img src="${manga.coverImage}"
+                                         width="50"
+                                         height="70"
+                                         class="me-2"
+                                         alt="${manga.title}">
+                                    <span>${manga.title}</span>
+                                </div>
+                            </button>
+                        </form>
+                    `;
+                });
+                document.getElementById("AdminsearchResults").innerHTML = html;
+            })
+            .catch(error => console.error("Search failed:", error));
+    });
+
+
 
     document.addEventListener("DOMContentLoaded", function () {
 

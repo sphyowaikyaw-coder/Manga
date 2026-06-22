@@ -108,9 +108,16 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
         name: "default",
-        pattern: "{controller:hash}/{action:hash}",
-        defaults: new { controller = "Manga", action = "Index" });
+        pattern: "{controller=Manga}/{action=Index}");
 });
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllerRoute(
+//        name: "default",
+//        pattern: "{controller:hash}/{action:hash}",
+//        defaults: new { controller = "Manga", action = "Index" });
+//});
 
 
 

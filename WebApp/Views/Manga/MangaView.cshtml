@@ -20,6 +20,7 @@
         <form class="search-strip" id="searchResultsForm" asp-controller="Manga" asp-action="Index" method="get">
             <i class="fa fa-search"></i>
             <input type="text" name="q" value="@searchQuery" id="searchBox" class="form-control" placeholder="Search manga, manhwa, manhua...">
+            
             <div id="searchResults"
                  class="list-group position-absolute w-100"
                  >
@@ -142,5 +143,8 @@
                 }
             });
         })();
+
+            
+       
     </script>
 }
